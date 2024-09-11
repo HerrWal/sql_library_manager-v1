@@ -7,7 +7,21 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
+const { sequelize } = require('./models/index');
+const { error } = require('console');
+
 var app = express();
+
+// Sync the model and connect to the database
+(async () => {
+  await sequelize.sync({ force: true });
+  try {
+    await sequelize.authenticate();
+    console.log('Connection to the database successful!');
+  } catch (error) {
+    console.error('Error connecting to the database: ', error);
+  }
+}) ();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -24,7 +38,8 @@ app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  next(createError(404));
+  const error = createError(404, 'Page not found');
+  res.render('library/page_not_found', { error });
 });
 
 // error handler
@@ -35,7 +50,9 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  err.messsage = err.message || `Something went wrong with the server!`
+  console.log(`Error: ${res.status}, ${res.message}`);
+  res.render('error', { err });
 });
 
 module.exports = app;
