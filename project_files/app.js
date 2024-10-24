@@ -7,16 +7,16 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var booksRouter = require('./routes/books');
 
-const { sequelize } = require('./models/index');
+const db = require('./models/index');
 const { error } = require('console');
 
 var app = express();
 
 // Sync the model and connect to the database
 (async () => {
-  await sequelize.sync({ force: true });
+  await db.sequelize.sync({ force: true });
   try {
-    await sequelize.authenticate();
+    await db.sequelize.authenticate();
     console.log('Connection to the database successful!');
   } catch (error) {
     console.error('Error connecting to the database: ', error);
