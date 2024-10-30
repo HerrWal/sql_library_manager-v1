@@ -14,7 +14,7 @@ var app = express();
 
 // Sync the model and connect to the database
 (async () => {
-  await db.sequelize.sync({ force: true });
+  await db.sequelize.sync();
   try {
     await db.sequelize.authenticate();
     console.log('Connection to the database successful!');
